@@ -16,24 +16,24 @@ const app = express();
 app.use(express.json());
 
 app.get('/restaurants', (req, res) => {
-  Restaurant
-    .find()
+    Restaurant
+        .find()
     // we're limiting because restaurants db has > 25,000
     // documents, and that's too much to process/return
-    .limit(10)
+        .limit(10)
     // success callback: for each restaurant we got back, we'll
     // call the `.serialize` instance method we've created in
     // models.js in order to only expose the data we want the API return.    
-    .then(restaurants => {
-      res.json({
-        restaurants: restaurants.map(
-          (restaurant) => restaurant.serialize())
-      });
-    })
-    .catch(err => {
-      console.error(err);
-      res.status(500).json({ message: 'Internal server error' });
-    });
+        .then(restaurants => {
+            res.json({
+                restaurants: restaurants.map(
+                    (restaurant) => restaurant.serialize())
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ message: 'Internal server error' });
+        });
 });
 
 app.get('/restaurants/:id', (req, res) => {
@@ -125,18 +125,19 @@ let server;
 // this function connects to our database, then starts the server
 function runServer(databaseUrl, port = PORT) {
 
-  return new Promise((resolve, reject) => {
-    mongoose.connect(databaseUrl, err => {
-      if (err) {
-        return reject(err);
-      }
-      server = app.listen(port, () => {
-        console.log(`Your app is listening on port ${port}`);
-        resolve();
-      })
-        .on('error', err => {
-          mongoose.disconnect();
-          reject(err);
+    return new Promise((resolve, reject) => {
+        mongoose.connect(databaseUrl, err => {
+            if (err) {
+                return reject(err);
+            }
+            server = app.listen(port, () => {
+                console.log(`Your app is listening on port ${port}`);
+                resolve();
+            })
+                .on('error', err => {
+                    mongoose.disconnect();
+                    reject(err);
+                });
         });
     });
 }
@@ -160,7 +161,7 @@ function closeServer() {
 // if server.js is called directly (aka, with `node server.js`), this block
 // runs. but we also export the runServer command so other code (for instance, test code) can start the server as needed.
 if (require.main === module) {
-  runServer(DATABASE_URL).catch(err => console.error(err));
+    runServer(DATABASE_URL).catch(err => console.error(err));
 }
 
 module.exports = { app, runServer, closeServer };
